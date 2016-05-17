@@ -1,0 +1,1406 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Game</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+
+<style>
+table,th,td{
+	border:1px solid black;
+	border-collapse:collapse;
+}
+tr,th,td{
+	width:60px;
+	height:60px;
+	padding:5px;
+	text-align:center;
+}
+.potentialMove{
+	background-color:red;
+}
+#map,#unitinfo,#commands,#results{
+	position:relative;
+	float:left;
+	padding:10px;
+}
+#map{
+	width:800px;
+}
+#unitinfo,#commands{
+	width:250px;
+	padding:10px;
+}
+#everything{
+	width:1400px;
+}
+.info-topic{
+	height:10px;
+	padding:5px;
+}
+.infotable{
+	border:1px solid black;
+	border-collapse:collapse;
+	width:220px;
+	text-align:left;
+}
+.east{
+	transform:rotate(90deg);
+}
+.west{
+	transform:rotate(270deg);
+}
+.south{
+	transform:rotate(180deg);
+}
+</style>
+</head>
+
+<body>
+
+<div id="everything">
+<div id="map">
+<table id="visiblemap">
+	<tr>
+		<th>0</th>
+		<th>1</th>
+		<th>2</th>
+		<th>3</th>
+		<th>4</th>
+		<th>5</th>
+		<th>6</th>
+		<th>7</th>
+		<th>8</th>
+		<th>9</th>
+		<th>10</th>
+	</tr>
+	<tr>
+		<th>1</th>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<th>2</th>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<th>3</th>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<th>4</th>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<th>5</th>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<th>6</th>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<th>7</th>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<th>8</th>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<th>9</th>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<th>10</th>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+</table>
+</div>
+
+<div id="commands">
+	<h1>Commands</h1>
+	<h5>Change Formation</h5>
+	<button id="change-formation-line" style="visibility:hidden">Line</button>
+	<button id="change-formation-square" style="visibility:hidden">Square</button>
+	<br />
+	<button id="change-formation-charge" style="visibility:hidden">Charge</button>
+	<button id="change-formation-loose" style="visibility:hidden">Loose</button>
+	
+	<h5>Change Direction</h5>
+	<button id="change-direction-n-s" style="visibility:hidden">North/South</button>
+	<button id="change-direction-e-w" style="visibility:hidden">East/West</button>
+	<br />
+	<button id="change-direction-n" style="visibility:hidden">North</button>
+	<button id="change-direction-s" style="visibility:hidden">South</button>
+	<button id="change-direction-e" style="visibility:hidden">East</button>
+	<button id="change-direction-w" style="visibility:hidden">West</button>
+	
+	<h5>Misc</h5>
+	<button id="misc-reinforce">Reinforce</button>
+	
+	<h5>End Turn</h5>
+	<button id="end-turn">End Turn</button>
+</div>
+
+<div id="unitinfo">
+	<h1 id="whose-turn">Player 1's Turn</h1>
+	<table id="unitinfotable" class="infotable">
+		<tr>
+			<td class="info-topic">Unit Name: </td>
+			<td id="info-unitname"></td>
+		</tr>
+		<tr>
+			<td class="info-topic">Unit Type: </td>
+			<td id="info-unittype"></td>
+		</tr>
+		<tr>
+			<td class="info-topic">Subtype: </td>
+			<td id="info-subtype"></td>
+		</tr>
+		<tr>
+			<td class="info-topic">Allegiance: </td>
+			<td id="info-allegiance"></td>
+		</tr>
+		<tr>
+			<td class="info-topic">Strength: </td>
+			<td id="info-strength"></td>
+		</tr>
+		<tr>
+			<td class="info-topic">Formation: </td>
+			<td id="info-formation"></td>
+		</tr>
+		<tr>
+			<td class="info-topic">Facing direction: </td>
+			<td id="info-direction"></td>
+		</tr>
+		<tr>
+			<td class="info-topic">Initiatives remaining: </td>
+			<td id="info-initiatives-remaining"></td>
+		</tr>
+	</table>
+</div>
+
+<div id="world-builder">
+<h1>World Builder</h1>
+Name of new unit: <input id="builder-unitname" type="text" name="unitname"><br><br />
+<button id="builder-team">Player 1</button><br />
+<button id="builder-unittype">Infantry</button>
+<button id="builder-formation">Line</button>
+<button id="builder-direction">N/S</button>
+<button id="builder-subtype">Musketeer</button><br /><br />
+<button id="builder-start">Start Game</button>
+</div>
+
+
+<div id="results">
+<h3>Strength Remaining</h3>
+<p id="total-strength-remaining"></p>
+<p id="combat-result"></p>
+</div>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+	// id counter
+	var id = 1;
+	
+	// active unitinfo
+	var unitIsActive = 0;
+	var activeId = 0;
+	var activeUnit = 0;
+	var activeMoves = 0;
+	
+	// squares on the board
+	var SQWIDTH = 70;
+	var SQHEIGHT = 75;
+	var BEGINWIDTH = 80;
+	var BEGINHEIGHT = 80;
+	
+	// turn counter
+	var playersTurn = true;
+	
+	// game mechanic globals
+	var reinforcement = 15;
+	var reinforcementRange = 5;
+	var maxCompanySize = 300;
+	var infAtkModifier = 1;
+	var infDefModifier = 1;
+	var cavAtkModifier = 1;
+	var cavDefModifier = 1;
+	var artAtkModifier = 1;
+	var artDefModifier = 1;
+	
+	// Generic Unit
+	function Unit(){
+		// metadata
+		this.name = "";
+		this.type = "Unknown";
+		this.xpos = NaN;
+		this.ypos = NaN;
+		this.ai = false;
+		this.id = NaN;
+		
+		// stats
+		this.strength = NaN;
+		this.formation = "";
+		this.direction = "";
+		this.initiative = 0;
+	}
+	
+	// Hero
+	function Hero(yourname,x,y, isAI){
+		this.name = yourname;
+		this.type = "Hero";
+		this.xpos = x;
+		this.ypos = y;
+		this.ai = isAI;
+		this.id = id++;
+		
+		this.strength = 1;
+		this.initiative = 2;
+		
+		this.resetInitiative = function(){
+			this.initiative = 2;
+		}
+	}
+	
+	// Infantry company
+	function Infantry(yourname,x,y,isAI,initDir,initForm, subtype){
+		this.name = yourname;
+		this.type = "Infantry";
+		this.xpos = x;
+		this.ypos = y;
+		this.ai = isAI;
+		this.id = id++;
+		
+		this.strength = maxCompanySize;
+		this.formation = initForm;
+		this.direction = initDir;
+		this.subtype = subtype;
+		this.initative = 1;
+		
+		this.resetInitiative = function(){
+			this.initiative = 1;
+		}
+	}
+	
+	// Cavalry company
+	function Cavalry(yourname,x,y,isAI,initDir,initForm, subtype){
+		this.name = yourname;
+		this.type = "Cavalry";
+		this.xpos = x;
+		this.ypos = y;
+		this.ai = isAI;
+		this.id = id++;
+		
+		this.strength = maxCompanySize;
+		this.formation = initForm;
+		this.direction = initDir;
+		this.subtype = subtype;
+		this.initative = 2;
+		
+		this.resetInitiative = function(){
+			this.initiative = 2;
+		}
+	}
+	
+	// Artillery company
+	function Artillery(yourname,x,y,isAI,initDir,initForm, subtype){
+		this.name = yourname;
+		this.type = "Artillery";
+		this.xpos = x;
+		this.ypos = y;
+		this.ai = isAI;
+		this.id = id++;
+		
+		this.strength = maxCompanySize;
+		this.formation = initForm;
+		this.direction = initDir;
+		this.subtype = subtype;
+		this.initative = 1;
+		
+		this.resetInitiative = function(){
+			this.initiative = 1;
+		}
+	}
+
+	Hero.prototype = new Unit();
+	Hero.prototype.constructor = Unit;
+	Infantry.prototype = new Unit();
+	Infantry.prototype.constructor = Unit;
+	Cavalry.prototype = new Unit();
+	Cavalry.prototype.constructor = Unit;
+	
+	// variable initialization
+	var terrainmap = [[0,1,2,3,4,5,6,7,8,9,10],
+	[1,"plains","plains","plains","plains","plains","plains","plains","plains","plains","plains"],
+	[2,"plains","plains","plains","plains","plains","plains","plains","plains","plains","plains"],
+	[3,"plains","plains","plains","plains","plains","plains","plains","plains","plains","plains"],
+	[4,"plains","plains","plains","plains","plains","plains","plains","plains","plains","plains"],
+	[5,"plains","plains","plains","plains","plains","plains","plains","plains","plains","plains"],
+	[6,"plains","plains","plains","plains","plains","plains","plains","plains","plains","plains"],
+	[7,"plains","plains","plains","plains","plains","plains","plains","plains","plains","plains"],
+	[8,"plains","plains","plains","plains","plains","plains","plains","plains","plains","plains"],
+	[9,"plains","plains","plains","plains","plains","plains","plains","plains","plains","plains"],
+	[10,"plains","plains","plains","plains","plains","plains","plains","plains","plains","plains"]];
+	
+	var unitmap = [[0,1,2,3,4,5,6,7,8,9,10],
+	[1,"","","","","","","","","",""],
+	[2,"","","","","","","","","",""],
+	[3,"","","","","","","","","",""],
+	[4,"","","","","","","","","",""],
+	[5,"","","","","","","","","",""],
+	[6,"","","","","","","","","",""],
+	[7,"","","","","","","","","",""],
+	[8,"","","","","","","","","",""],
+	[9,"","","","","","","","","",""],
+	[10,"","","","","","","","","",""],
+	];
+	
+	var unitIDs = ["placeholder"];
+	
+	var MAPMIN = 1;
+	var MAPMAX = 10;
+	
+	// world builder globals
+	var isBuilding = true;
+	var unittype = "Infantry";
+	var unitname = "1st Musketeer Company";
+	var team1 = true;
+	var initDir = "N/S";
+	var initForm = "Line";
+	var initSubtype = "Musketeer";
+	
+	// set up the map
+	
+	// draw map
+	redrawMap();
+	
+	/////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////
+	
+	function recalcStrength (){
+		var p1str = 0;
+		var p2str = 0;
+		for (i = MAPMIN + 1; i <= MAPMAX + 1; i++){
+			for (j = MAPMIN + 1; j <= MAPMAX + 1; j++){
+				var unit = unitmap[i-1][j-1];
+				if (unit !== ""){
+					if (unit.ai){
+						// player 2
+						p2str += unit.strength;
+					}
+					else{
+						p1str += unit.strength;
+					}
+				}
+			}
+		}
+		$("#total-strength-remaining").html("Player 1: " + p1str + "<br /><br />");
+		$("#total-strength-remaining").append("Player 2: " + p2str);
+	}
+	
+	
+	// redraws the map
+	function redrawMap(){
+		for (i = MAPMIN + 1; i <= MAPMAX + 1; i++){
+			for (j = MAPMIN + 1; j <= MAPMAX + 1; j++){
+				var unit = unitmap[i-1][j-1];
+				if (unit === ""){
+					if (terrainmap[i-1][j-1] === "plains"){
+						$("#visiblemap tr:nth-child("+j+") td:nth-child("+i+")").html('<img src="plains.jpg" alt="Plains" class="terrain">');
+					}
+				}
+				else{
+					var p = 1;
+					if (unit.ai){
+						p = 2;
+					}
+					if (unit.type === "Hero"){
+						$("#visiblemap tr:nth-child("+j+") td:nth-child("+i+")").html('<img src="hero'+p+'.jpg" alt="Hero">');
+					}
+					else if (unit.type === "Infantry"){
+						if (unit.direction === "E/W")
+							$("#visiblemap tr:nth-child("+j+") td:nth-child("+i+")").html('<img src="infantry'+p+'.jpg" alt="Infantry" class="east">');
+						else
+							$("#visiblemap tr:nth-child("+j+") td:nth-child("+i+")").html('<img src="infantry'+p+'.jpg" alt="Infantry">');
+					}
+					else if (unit.type === "Cavalry"){
+						if (unit.direction === "E")
+							$("#visiblemap tr:nth-child("+j+") td:nth-child("+i+")").html('<img src="cavalry'+p+'.jpg" alt="Cavalry" class="east">');
+						else if (unit.direction === "S")
+							$("#visiblemap tr:nth-child("+j+") td:nth-child("+i+")").html('<img src="cavalry'+p+'.jpg" alt="Cavalry" class="south">');
+						else if (unit.direction === "W")
+							$("#visiblemap tr:nth-child("+j+") td:nth-child("+i+")").html('<img src="cavalry'+p+'.jpg" alt="Cavalry" class="west">');
+						else
+							$("#visiblemap tr:nth-child("+j+") td:nth-child("+i+")").html('<img src="cavalry'+p+'.jpg" alt="Cavalry">');
+					}
+					else if (unit.type === "Artillery"){
+						if (unit.direction === "E")
+							$("#visiblemap tr:nth-child("+j+") td:nth-child("+i+")").html('<img src="artillery'+p+'.jpg" alt="Artillery" class="east">');
+						else if (unit.direction === "S")
+							$("#visiblemap tr:nth-child("+j+") td:nth-child("+i+")").html('<img src="artillery'+p+'.jpg" alt="Artillery" class="south">');
+						else if (unit.direction === "W")
+							$("#visiblemap tr:nth-child("+j+") td:nth-child("+i+")").html('<img src="artillery'+p+'.jpg" alt="Artillery" class="west">');
+						else
+							$("#visiblemap tr:nth-child("+j+") td:nth-child("+i+")").html('<img src="artillery'+p+'.jpg" alt="Artillery">');
+					}
+				}
+			}
+		}
+		recalcStrength();
+	}
+	
+	// get available moves for a unit
+	function getAvailableMoves(unit){
+		var ans = [];
+		if (unit.xpos + 1 <= MAPMAX && unit.xpos + 1 >= MAPMIN	// movement east
+		&& unit.ypos <= MAPMAX && unit.ypos >= MAPMIN){
+			if ((unit.type === "Cavalry" || unit.type === "Artillery") && unit.direction !== "E"){}
+			else{
+				ans.push({x:unit.xpos+1, y:unit.ypos});
+			}
+		}
+		if (unit.xpos - 1 <= MAPMAX && unit.xpos - 1 >= MAPMIN	// movement west
+		&& unit.ypos <= MAPMAX && unit.ypos >= MAPMIN){
+			if ((unit.type === "Cavalry" || unit.type === "Artillery") && unit.direction !== "W"){}
+			else{
+				ans.push({x:unit.xpos-1, y:unit.ypos});
+			}
+		}
+		if (unit.xpos <= MAPMAX && unit.xpos >= MAPMIN	// movement south
+		&& unit.ypos + 1 <= MAPMAX && unit.ypos + 1>= MAPMIN){
+			if ((unit.type === "Cavalry" || unit.type === "Artillery") && unit.direction !== "S"){}
+			else{
+				ans.push({x:unit.xpos, y:unit.ypos+1});
+			}
+		}
+		if (unit.xpos <= MAPMAX && unit.xpos >= MAPMIN	// movement north
+		&& unit.ypos - 1 <= MAPMAX && unit.ypos - 1>= MAPMIN){
+			if ((unit.type === "Cavalry" || unit.type === "Artillery") && unit.direction !== "N"){}
+			else{
+				ans.push({x:unit.xpos, y:unit.ypos-1});
+			}
+		}
+		if (unit.type === "Artillery"){
+			if (unit.xpos + 2 <= MAPMAX && unit.xpos + 2 >= MAPMIN	// movement east+2
+			&& unit.ypos <= MAPMAX && unit.ypos >= MAPMIN){
+				if (unit.direction !== "E"){}
+				else{
+					ans.push({x:unit.xpos+2, y:unit.ypos});
+				}
+			}
+			if (unit.xpos - 2 <= MAPMAX && unit.xpos - 2 >= MAPMIN	// movement west+2
+			&& unit.ypos <= MAPMAX && unit.ypos >= MAPMIN){
+				if (unit.direction !== "W"){}
+				else{
+					ans.push({x:unit.xpos-2, y:unit.ypos});
+				}
+			}
+			if (unit.xpos <= MAPMAX && unit.xpos >= MAPMIN	// movement south+2
+			&& unit.ypos + 2 <= MAPMAX && unit.ypos + 2>= MAPMIN){
+				if (unit.direction !== "S"){}
+				else{
+					ans.push({x:unit.xpos, y:unit.ypos+2});
+				}
+			}
+			if (unit.xpos <= MAPMAX && unit.xpos >= MAPMIN	// movement north+2
+			&& unit.ypos - 2 <= MAPMAX && unit.ypos - 2>= MAPMIN){
+				if (unit.direction !== "N"){}
+				else{
+					ans.push({x:unit.xpos, y:unit.ypos-2});
+				}
+		}
+		
+		}
+		return ans;
+	}
+	
+	// De-select a unit
+	//
+	//
+	function deSelectActive(){
+		for (i=0;i < activeMoves.length; i++){
+			var ypos = activeMoves[i].y + 1;
+			var xpos = activeMoves[i].x + 1;
+			$("#visiblemap tr:nth-child("+ypos+") td:nth-child("+xpos+")").removeClass("potentialMove");
+		}
+		unitIsActive--;
+		activeId = 0;
+		activeUnit = 0;
+		activeMoves = 0;
+		$("#info-unitname").html("");
+		$("#info-unittype").html("");
+		$("#info-allegiance").html("");
+		$("#info-strength").html("");
+		$("#info-formation").html("");
+		$("#info-direction").html("");
+		$("#info-subtype").html("");
+		$("#info-initiatives-remaining").html("");
+		
+		// formation displays
+		$("#change-formation-line").css("visibility","hidden");
+		$("#change-formation-square").css("visibility","hidden");
+		$("#change-formation-charge").css("visibility","hidden");
+		$("#change-formation-loose").css("visibility","hidden");
+		$("#change-direction-e-w").css("visibility","hidden");
+		$("#change-direction-n-s").css("visibility","hidden");
+		$("#change-direction-n").css("visibility","hidden");
+		$("#change-direction-s").css("visibility","hidden");
+		$("#change-direction-e").css("visibility","hidden");
+		$("#change-direction-w").css("visibility","hidden");
+		
+		redrawMap();
+	}
+
+	// displays active unit's information
+	function displayUnitInfo(){
+		$("#info-unitname").html(activeUnit.name);
+		$("#info-unittype").html(activeUnit.type);
+		if (!activeUnit.ai){
+			$("#info-allegiance").html("Player 1");
+		}
+		else {
+			$("#info-allegiance").html("Player 2");
+		}
+		$("#info-strength").html(activeUnit.strength);
+		$("#info-formation").html(activeUnit.formation);
+		$("#info-direction").html(activeUnit.direction);
+		$("#info-subtype").html(activeUnit.subtype);
+		$("#info-initiatives-remaining").html(activeUnit.initiative);
+		
+		//formation displays
+		if (activeUnit.ai !== playersTurn){
+			if (activeUnit.type === "Infantry"){
+				$("#change-formation-line").css("visibility","visible");
+				$("#change-formation-square").css("visibility","visible");
+				$("#change-direction-e-w").css("visibility","visible");
+				$("#change-direction-n-s").css("visibility","visible");
+			}
+			else if (activeUnit.type === "Cavalry"){
+				$("#change-formation-charge").css("visibility","visible");
+				$("#change-formation-loose").css("visibility","visible");
+				$("#change-direction-n").css("visibility","visible");
+				$("#change-direction-s").css("visibility","visible");
+				$("#change-direction-e").css("visibility","visible");
+				$("#change-direction-w").css("visibility","visible");
+			}
+			else if (activeUnit.type === "Artillery"){
+				$("#change-direction-n").css("visibility","visible");
+				$("#change-direction-s").css("visibility","visible");
+				$("#change-direction-e").css("visibility","visible");
+				$("#change-direction-w").css("visibility","visible");
+			}
+		}
+	}
+	
+	// Calculates damage given the modifiers
+	function damageTaken(atkStr, defStr, formMod, atkTypeMod, defTypeMod){
+		return {
+			atkdmgtaken: Math.floor((5 + Math.floor((defStr * 0.15) + (Math.random() * (6 - 1) + 1))) * (1/ formMod) * defTypeMod),
+			defdmgtaken: Math.floor((5 + Math.floor((atkStr * 0.15) + (Math.random() * (6 - 1) + 1))) * formMod * atkTypeMod)
+		};
+	}
+	
+	// resolves combat
+	//
+	//
+	function resolveCombat(attacker, defender){
+		var attackingDirection = "";
+		if (attacker.xpos < defender.xpos){
+			attackingDirection = "E";
+		}
+		else if (attacker.xpos > defender.xpos){
+			attackingDirection = "W";
+		}
+		else if (attacker.ypos < defender.ypos){
+			attackingDirection = "S";
+		}
+		else {
+			attackingDirection = "N";
+		}
+	
+		var atkerdmgtaken = 0;
+		var deferdmgtaken = 0;
+		var dmgCalc = {atkdmgtaken:0, defdmgtaken:0};
+		
+		
+		// subtype modifiers
+		// XXXatkModifier = extra damage the attacker makes
+		if (attacker.subtype === "Rifle"){
+			infAtkModifier += 2;
+		}
+		if (defender.subtype === "Rifle"){
+			infDefModifier += 2;
+		}
+		if (attacker.subtype === "Men-at-arms"){
+			infAtkModifier -= 0.5;
+		}
+		if (defender.subtype === "Men-at-arms"){
+			infDefModifier -= 0.5;
+		}
+		
+		if (attacker.type === "Infantry" && defender.type === "Infantry"){
+			if (attacker.formation === "Line"){
+				if ((attacker.direction === "N/S" && (attackingDirection === "N" || attackingDirection === "S")) ||
+					(attacker.direction === "E/W" && (attackingDirection === "E" || attackingDirection === "W"))){
+					// attacker in line
+					if (defender.formation === "Line" && defender.direction !== attacker.direction){
+						// line -> column
+						dmgCalc = damageTaken(attacker.strength, defender.strength, 1, infAtkModifier, infDefModifier);
+					}
+					else if (defender.formation === "Line" && defender.direction === attacker.direction){
+						// line -> line
+						dmgCalc = damageTaken(attacker.strength, defender.strength, 1.2, infAtkModifier, infDefModifier);
+					}
+					else if (defender.formation === "Square"){
+						// line -> square
+						dmgCalc = damageTaken(attacker.strength, defender.strength, 1.2, infAtkModifier, infDefModifier);
+					}
+				}
+				else{
+					if (defender.formation === "Line" && defender.direction === attacker.direction){
+						// column -> column
+						dmgCalc = damageTaken(attacker.strength, defender.strength, 1, infAtkModifier, infDefModifier);
+					}
+					else if (defender.formation === "Line" && defender.direction !== attacker.direction){
+						// column -> line
+						dmgCalc = damageTaken(attacker.strength, defender.strength, 1.4, infAtkModifier, infDefModifier);
+					}
+					else if (defender.formation === "Square"){
+						// column -> square
+						dmgCalc = damageTaken(attacker.strength, defender.strength, 1.4, infAtkModifier, infDefModifier);
+					}
+				}
+			}
+			else if (attacker.formation === "Square"){
+				// attacker in square
+				if (defender.formation === "Line"){
+					// defender in column or line
+					if ((defender.direction === "N/S" && (attackingDirection === "N" || attackingDirection === "S")) ||
+						(defender.direction === "E/W" && (attackingDirection === "E" || attackingDirection === "W"))){
+						// defender in line
+						// square -> line
+						dmgCalc = damageTaken(attacker.strength, defender.strength, 0.6, infAtkModifier, infDefModifier);
+					}	
+					else {
+						// square -> column
+						dmgCalc = damageTaken(attacker.strength, defender.strength, 0.8, infAtkModifier, infDefModifier);
+					}
+				}
+				else if (defender.formation === "Square"){
+					// square -> square
+					dmgCalc = damageTaken(attacker.strength, defender.strength, 0.9, infAtkModifier, infDefModifier);
+				}
+			}
+		}
+		else if (attacker.type === "Infantry" && defender.type === "Cavalry"){
+			if (attacker.formation === "Line"){
+				if ((attacker.direction === "N/S" && (attackingDirection === "N" || attackingDirection === "S")) ||
+					(attacker.direction === "E/W" && (attackingDirection === "E" || attackingDirection === "W"))){
+					// attacker in line
+					if (defender.formation === "Charge"){
+						// defender in charge
+						// line -> charge
+						dmgCalc = damageTaken(attacker.strength, defender.strength, 1.2, infAtkModifier, cavDefModifier);
+					}
+					else if (defender.formation === "Loose"){
+						// line -> loose
+						dmgCalc = damageTaken(attacker.strength, defender.strength, 0.8, infAtkModifier, cavDefModifier);
+					}
+				}
+				else {
+					// attacker in column
+					if (defender.formation === "Charge"){
+						// defender in charge
+						// column -> charge
+						dmgCalc = damageTaken(attacker.strength, defender.strength, 0.8, infAtkModifier, cavDefModifier);
+					}
+					else if (defender.formation === "Loose"){
+						// column -> loose
+						dmgCalc = damageTaken(attacker.strength, defender.strength, 0.6, infAtkModifier, cavDefModifier);
+					}
+				}
+			}
+			else if (attacker.formation === "Square"){
+				// attacker in square
+				if (defender.formation === "Charge"){
+					// defender in charge
+					// square -> charge
+					dmgCalc = damageTaken(attacker.strength, defender.strength, 1.1, infAtkModifier, cavDefModifier);
+				}
+				else if (defender.formation === "Loose"){
+					// square -> loose
+					dmgCalc = damageTaken(attacker.strength, defender.strength, 1, infAtkModifier, cavDefModifier);
+				}
+			}
+		}
+		else if (attacker.type === "Infantry" && defender.type === "Hero"){}
+		else if (attacker.type === "Cavalry" && defender.type === "Infantry"){
+			if (attacker.formation === "Charge"){
+				if (defender.formation === "Line"){
+					if ((defender.direction === "N/S" && (attackingDirection === "N" || attackingDirection === "S")) ||
+						(defender.direction === "E/W" && (attackingDirection === "E" || attackingDirection === "W"))){
+						// charge -> line
+						dmgCalc = damageTaken(attacker.strength, defender.strength, 1.2, cavAtkModifier, infDefModifier);
+					}
+					else {
+						// charge -> column
+						dmgCalc = damageTaken(attacker.strength, defender.strength, 1.4, cavAtkModifier, infDefModifier);
+					}
+				}
+				else if (defender.formation === "Square"){
+					// charge -> square
+					dmgCalc = damageTaken(attacker.strength, defender.strength, 0.5, cavAtkModifier, infDefModifier);
+				}
+			}
+			else if (attacker.formation === "Loose"){
+				if (defender.formation === "Line"){
+					if ((defender.direction === "N/S" && (attackingDirection === "N" || attackingDirection === "S")) ||
+						(defender.direction === "E/W" && (attackingDirection === "E" || attackingDirection === "W"))){
+						// Loose -> line
+						dmgCalc = damageTaken(attacker.strength, defender.strength, 0.6, cavAtkModifier, infDefModifier);
+					}
+					else {
+						// Loose -> column
+						dmgCalc = damageTaken(attacker.strength, defender.strength, 1.2, cavAtkModifier, infDefModifier);
+					}
+				}
+				else if (defender.formation === "Square"){
+					// Loose -> square
+					dmgCalc = damageTaken(attacker.strength, defender.strength, 0.6, cavAtkModifier, infDefModifier);
+				}
+			}
+		}
+		else if (attacker.type === "Cavalry" && defender.type === "Cavalry"){
+			dmgCalc = damageTaken(attacker.strength, defender.strength, 1, cavAtkModifier, cavDefModifier);
+			if (attacker.formation === defender.formation){
+				dmgCalc.atkdmgtaken = Math.floor(dmgCalc.atkdmgtaken * 1.1);
+				dmgCalc.defdmgtaken = Math.floor(dmgCalc.defdmgtaken * 1.1);
+			}
+		}
+		else if (attacker.type === "Cavalry" && defender.type === "Hero"){}
+		else if (attacker.type === "Hero" && defender.type === "Infantry"){}
+		else if (attacker.type === "Hero" && defender.type === "Cavalry"){}
+		else if (attacker.type === "Hero" && defender.type === "Hero"){}
+		else if (defender.type === "Artillery"){
+			if (attacker.type === "Infantry"){
+				if (attacker.formation === "Line"){
+					// line/column -> artillery
+					dmgCalc = damageTaken(attacker.strength, defender.strength, 1.6, infAtkModifier, artDefModifier);
+				}
+				else if (attacker.formation === "Square"){
+					// square -> artillery
+					dmgCalc = damageTaken(attacker.strength, defender.strength, 1.2, infAtkModifier, artDefModifier);
+				}
+			}
+			else if (attacker.type === "Cavalry"){
+				dmgCalc = damageTaken(attacker.strength, defender.strength, 2, cavAtkModifier, artDefModifier);
+			}
+			else if (attacker.type === "Artillery"){
+				// Artillery -> Artillery
+				dmgCalc = damageTaken(attacker.strength, defender.strength, 1, artAtkModifier, artDefModifier);
+			}
+			else if (attacker.type === "Hero"){
+			}
+		}
+		else if (attacker.type === "Artillery"){
+			if (defender.type === "Infantry"){
+				if (defender.formation === "Line"){
+					if ((defender.direction === "N/S" && (attackingDirection === "N" || attackingDirection === "S")) ||
+						(defender.direction === "E/W" && (attackingDirection === "E" || attackingDirection === "W"))){
+						// Artillery -> line
+						dmgCalc = damageTaken(attacker.strength, defender.strength, 1.5, artAtkModifier, infDefModifier);
+					}
+					else {
+						// Artillery -> column
+						dmgCalc = damageTaken(attacker.strength, defender.strength, 1.7, artAtkModifier, infDefModifier);
+					}
+				}
+				else if (defender.formation === "Square"){
+					// Artillery -> square
+					dmgCalc = damageTaken(attacker.strength, defender.strength, 1.7, artAtkModifier, infDefModifier);
+				}
+			}
+			if (defender.type === "Cavalry"){
+				if (defender.formation === "Charge")
+					// Artillery -> Charge
+					dmgCalc = damageTaken(attacker.strength, defender.strength, 1.7, artAtkModifier, cavDefModifier);
+				else if (defender.formation === "Loose")
+					// Artillery -> Loose
+					dmgCalc = damageTaken(attacker.strength, defender.strength, 1.2, artAtkModifier, cavDefModifier);
+			}
+			if (defender.type === "Hero"){
+			}
+		}
+		
+		// resolving post-damage
+		attacker.strength -= dmgCalc.atkdmgtaken;
+		defender.strength -= dmgCalc.defdmgtaken;
+		
+		var resultmsg = "Defender " + defender.name + " took " + dmgCalc.defdmgtaken + " losses and now has " +defender.strength + " remaining.<br /><br />";
+		$("#combat-result").html(resultmsg);
+		
+		resultmsg = "Attacker " + attacker.name + " took " + dmgCalc.atkdmgtaken + " losses and now has " +attacker.strength + " remaining.<br /><br />";
+		$("#combat-result").append(resultmsg);
+		if (attacker.strength <= 0){
+			unitmap[attacker.xpos][attacker.ypos] = "";
+			redrawMap();
+			resultmsg = "<br /><br />The " + attacker.name + " has been shattered!<br /><br />";
+			$("#combat-result").append(resultmsg);
+		}
+		if (defender.strength <= 0){
+			unitmap[defender.xpos][defender.ypos] = "";
+			redrawMap();
+			resultmsg = "<br /><br />The " + defender.name + " has been shattered!<br /><br />";
+			$("#combat-result").append(resultmsg);
+		}
+		
+		// reset global modifiers
+		infAtkModifier = 1;
+		infDefModifier = 1;
+		cavAtkModifier = 1;
+		cavDefModifier = 1;
+		artAtkModifier = 1;
+		artDefModifier = 1;
+		recalcStrength();
+	}
+	
+	var ithCounter = 4;
+	function incrementNameCounter(){
+		var digits = Math.max(Math.floor(Math.log10(Math.abs(ithCounter))), 0) + 1;
+		console.log(digits);
+		var firstChars = $("#builder-unitname").val().substr(0,2+digits).trim();
+		var restOfTheName = $("#builder-unitname").val().substr(2+digits).trim();
+		console.log(restOfTheName);
+		if (firstChars === "1st"){
+			$("#builder-unitname").val("2nd "+restOfTheName);
+			ithCounter = 4;
+		}
+		else if (firstChars === "2nd"){
+			$("#builder-unitname").val("3rd "+restOfTheName);
+			ithCounter = 4;
+			cycling = true;
+		}
+		
+		else if (isNaN(parseInt(firstChars))){
+			
+		}
+		else {
+			$("#builder-unitname").val(ithCounter + "th "+restOfTheName);
+			ithCounter++;
+		}
+	}
+	
+	// Selecting something on the map
+	//
+	//
+	$("#map td").on('click', function(e){
+		var x = Math.floor((e.pageX - BEGINWIDTH) / SQWIDTH) + 1;
+		var y = Math.floor((e.pageY - BEGINHEIGHT) / SQHEIGHT) + 1;
+	
+		var unitClicked = unitmap[x][y];
+		if (isBuilding){
+			if (unitClicked === ""){
+				if (unittype === "Infantry"){
+					var unit = new Infantry($("#builder-unitname").val(), x, y, !team1, initDir, initForm, initSubtype);
+					unitmap[unit.xpos][unit.ypos] = unit;
+					unitIDs.push(unit);
+				}
+				else if (unittype === "Cavalry"){
+					var unit = new Cavalry($("#builder-unitname").val(), x, y, !team1, initDir, initForm, initSubtype);
+					unitmap[unit.xpos][unit.ypos] = unit;
+					unitIDs.push(unit);
+				}
+				else if (unittype === "Artillery"){
+					var unit = new Artillery($("#builder-unitname").val(), x, y, !team1, initDir, initForm, initSubtype);
+					unitmap[unit.xpos][unit.ypos] = unit;
+					unitIDs.push(unit);
+				}
+				else if (unittype === "Hero"){
+					var unit = new Hero($("#builder-unitname").val(), x, y, !team1);
+					unitmap[unit.xpos][unit.ypos] = unit;
+					unitIDs.push(unit);
+				}
+			}
+			else {
+				unitmap[x][y] = "";
+			}
+			incrementNameCounter();
+			redrawMap();
+		}
+		else if (unitClicked === "" && unitIsActive === 0){
+			
+		}
+		else{
+			// select unit, de-select unit, attack, or move
+			
+			// action of active unit
+			if (unitIsActive === 1){
+				// selected a potential move
+				var potentialSelected = false;
+				for (c = 0; c < activeMoves.length; c++){
+					if (x === activeMoves[c].x && y === activeMoves[c].y){
+						potentialSelected = true;
+						break;
+					}
+				}
+				if (potentialSelected && activeUnit.initiative > 0 && playersTurn === !activeUnit.ai){
+					// proceed with attack or movement
+					if (unitClicked === ""){
+						// movement
+						var movement = true;
+						if (activeUnit.type === "Artillery"){
+							if (Math.abs(activeUnit.xpos - x) > 1 || Math.abs(activeUnit.ypos - y) > 1){
+								movement = false;
+							}
+						}
+						if (movement){
+							unitmap[activeUnit.xpos][activeUnit.ypos] = "";
+							unitmap[x][y] = activeUnit;
+							activeUnit.xpos = x;
+							activeUnit.ypos = y;
+							activeUnit.initiative--;
+						}
+					}
+					else if (unitClicked.ai !== activeUnit.ai){
+						// attack
+						resolveCombat(activeUnit, unitClicked);
+						activeUnit.initiative--;
+					}
+					deSelectActive();
+				}
+				else if (activeId === unitClicked.id || activeUnit.initiative === 0){
+					// de-select unit
+					deSelectActive();
+				}
+				else{
+					// do nothing
+				}
+			}
+			// selects unit
+			else {
+				activeId = unitClicked.id;
+				activeUnit = unitClicked;
+				activeMoves = getAvailableMoves(activeUnit);
+				for (i=0;i<activeMoves.length;i++){
+					var ypos = activeMoves[i].y + 1;
+					var xpos = activeMoves[i].x + 1;
+					$("#visiblemap tr:nth-child("+ypos+") td:nth-child("+xpos+")").addClass("potentialMove");
+				}
+				unitIsActive++;
+				displayUnitInfo();
+			
+			}
+		}
+	});
+	
+	// Infantry
+	// change formation to Line
+	$("#change-formation-line").on('click', function(){
+		if (activeUnit.initiative > 0){
+			activeUnit.formation = "Line";
+			activeUnit.initiative--;
+			displayUnitInfo();
+		}
+	});
+	
+	// change formation to square
+	$("#change-formation-square").on('click', function(){
+		if (activeUnit.initiative > 0){
+			activeUnit.formation = "Square";
+			activeUnit.initiative--;
+			displayUnitInfo();
+		}
+	});
+	
+	// change directions
+	$("#change-direction-n-s").on('click', function(){
+		if (activeUnit.initiative > 0){
+			activeUnit.direction = "N/S";
+			activeUnit.initiative--;
+			displayUnitInfo();
+			if (unitIsActive === 1){
+				deSelectActive();
+			}
+			redrawMap();
+		}
+	});
+	
+	$("#change-direction-e-w").on('click', function(){
+		if (activeUnit.initiative > 0){
+			activeUnit.direction = "E/W";
+			activeUnit.initiative--;
+			displayUnitInfo();
+			if (unitIsActive === 1){
+				deSelectActive();
+			}
+			redrawMap();
+		}
+	});
+	
+	// Cavalry
+	// change formation to Charge
+	$("#change-formation-charge").on('click', function(){
+		if (activeUnit.initiative > 0){
+			activeUnit.formation = "Charge";
+			activeUnit.initiative--;
+			displayUnitInfo();
+		}
+	});
+	// change formation to Loose
+	$("#change-formation-loose").on('click', function(){
+		if (activeUnit.initiative > 0){
+			activeUnit.formation = "Loose";
+			activeUnit.initiative--;
+			displayUnitInfo();
+		}
+	});
+	// change directions
+	$("#change-direction-n").on('click', function(){
+		if (activeUnit.initiative > 0){
+			activeUnit.direction = "N";
+			activeUnit.initiative--;
+			displayUnitInfo();
+			if (unitIsActive === 1){
+				deSelectActive();
+			}
+			redrawMap();
+		}
+	});
+	$("#change-direction-s").on('click', function(){
+		if (activeUnit.initiative > 0){
+			activeUnit.direction = "S";
+			activeUnit.initiative--;
+			displayUnitInfo();
+			if (unitIsActive === 1){
+				deSelectActive();
+			}
+			redrawMap();
+		}
+	});
+	$("#change-direction-w").on('click', function(){
+		if (activeUnit.initiative > 0){
+			activeUnit.direction = "W";
+			activeUnit.initiative--;
+			displayUnitInfo();
+			if (unitIsActive === 1){
+				deSelectActive();
+			}
+			redrawMap();
+		}
+	});
+	$("#change-direction-e").on('click', function(){
+		if (activeUnit.initiative > 0){
+			activeUnit.direction = "E";
+			activeUnit.initiative--;
+			displayUnitInfo();
+			if (unitIsActive === 1){
+				deSelectActive();
+			}
+			redrawMap();
+		}
+	});
+	
+	$("#misc-reinforce").on('click', function(){
+		if (unitIsActive === 1){
+			var notEngaged = true;
+			for (i=0;i<activeMoves.length;i++){
+				if (unitmap[activeMoves[i].x][activeMoves[i].y] !== ""){
+					if (unitmap[activeMoves[i].x][activeMoves[i].y].ai === playersTurn){
+						notEngaged = false;
+					}
+				}
+			}
+			var bonus = Math.floor(Math.random() * reinforcementRange + 1) + reinforcement;
+			if (activeUnit.ai !== playersTurn && notEngaged){
+				if (activeUnit.strength < maxCompanySize){
+					activeUnit.strength += bonus;
+					if (activeUnit.strength > maxCompanySize){
+						activeUnit.strength = maxCompanySize;
+					}
+					activeUnit.initiative--;
+				}
+				var resultmsg = activeUnit.name + " has been reinforced with " + bonus + " troops and is now at " + activeUnit.strength + " strength.";
+				$("#combat-result").html(resultmsg);
+			}
+			displayUnitInfo;
+		}
+	});
+	
+	$("#end-turn").on('click', function(){
+		if (unitIsActive === 1)
+			deSelectActive();
+		for (i=1;i<unitIDs.length;i++){
+			if (unitIDs[i].ai !== playersTurn){
+				unitIDs[i].resetInitiative();
+			}
+		}
+		if (playersTurn){
+			$("#whose-turn").html("Player 2's Turn");
+			playersTurn = false;
+		}
+		else{
+			$("#whose-turn").html("Player 1's Turn");
+			playersTurn = true;
+		}
+	});
+	
+	$("#builder-team").on('click', function(){
+		if (team1){
+			team1 = false;
+			$("#builder-team").html("Player 2");
+		}
+		else{
+			team1 = true;
+			$("#builder-team").html("Player 1");
+		}
+	});
+	
+	$("#builder-unittype").on('click', function(){
+		if (unittype === "Infantry"){
+			unittype = "Cavalry";
+			initForm = "Charge";
+			initDir = "N";
+			initSubtype = "";
+			$("#builder-unittype").html("Cavalry");
+			$("#builder-formation").html("Charge");
+			$("#builder-direction").html("N");
+			$("#builder-subtype").html("");
+		}
+		else if (unittype === "Cavalry"){
+			unittype = "Artillery";
+			initForm = "";
+			initDir = "N";
+			initSubtype = "";
+			$("#builder-unittype").html("Artillery");
+			$("#builder-formation").html("");
+			$("#builder-direction").html("N");
+			$("#builder-subtype").html("");
+		}
+		else if (unittype === "Artillery"){
+			unittype = "Hero";
+			initForm = "";
+			initDir = "";
+			initSubtype = "";
+			$("#builder-unittype").html("Hero");
+			$("#builder-formation").html("");
+			$("#builder-direction").html("");
+			$("#builder-subtype").html("");
+		}
+		else if (unittype === "Hero"){
+			unittype = "Infantry";
+			initForm = "Line";
+			initDir = "N/S";
+			initSubtype = "Musketeer";
+			$("#builder-unittype").html("Infantry");
+			$("#builder-formation").html("Line");
+			$("#builder-direction").html("N/S");
+			$("#builder-subtype").html("Musketeer");
+		}
+	});
+	
+	$("#builder-formation").on('click', function(){
+		if (unittype === "Infantry"){
+			if (initForm === "Line"){
+				initForm = "Square";
+				$("#builder-formation").html("Square");
+			}
+			else if (initForm === "Square"){
+				initForm = "Line";
+				$("#builder-formation").html("Line");
+			}
+		}
+		else if (unittype === "Cavalry"){
+			if (initForm === "Charge"){
+				initForm = "Loose";
+				$("#builder-formation").html("Loose");
+			}
+			else if (initForm === "Loose"){
+				initForm = "Charge";
+				$("#builder-formation").html("Charge");
+			}
+		}
+		else if (unittype === "Hero"){
+		}
+	});
+	
+	$("#builder-direction").on('click', function(){
+		if (unittype === "Infantry"){
+			if (initDir === "N/S"){
+				initDir = "E/W";
+				$("#builder-direction").html("E/W");
+			}
+			else if (initDir === "E/W"){
+				initDir = "N/S";
+				$("#builder-direction").html("N/S");
+			}
+		}
+		else if (unittype === "Cavalry"){
+			if (initDir === "N"){
+				initDir = "E";
+				$("#builder-direction").html("E");
+			}
+			else if (initDir === "E"){
+				initDir = "S";
+				$("#builder-direction").html("S");
+			}
+			else if (initDir === "S"){
+				initDir = "W";
+				$("#builder-direction").html("W");
+			}
+			else if (initDir === "W"){
+				initDir = "N";
+				$("#builder-direction").html("N");
+			}
+		}
+		else if (unittype === "Artillery"){
+			if (initDir === "N"){
+				initDir = "E";
+				$("#builder-direction").html("E");
+			}
+			else if (initDir === "E"){
+				initDir = "S";
+				$("#builder-direction").html("S");
+			}
+			else if (initDir === "S"){
+				initDir = "W";
+				$("#builder-direction").html("W");
+			}
+			else if (initDir === "W"){
+				initDir = "N";
+				$("#builder-direction").html("N");
+			}
+		}
+		else if (unittype === "Hero"){
+		}
+	});
+	
+	$("#builder-subtype").on('click', function(){
+		if (unittype === "Infantry"){
+			if (initSubtype === "Musketeer"){
+				initSubtype = "Rifle";
+				$("#builder-subtype").html("Rifle");
+			}
+			else if (initSubtype === "Rifle"){
+				initSubtype = "Men-at-arms";
+				$("#builder-subtype").html("Men-at-arms");
+			}
+			else if (initSubtype === "Men-at-arms"){
+				initSubtype = "Musketeer";
+				$("#builder-subtype").html("Musketeer");
+			}
+		}
+		else if (unittype === "Cavalry"){
+		}
+		else if (unittype === "Artillery"){
+		}
+		else if (unittype === "Hero"){
+		}
+	});
+	
+	$("#builder-start").on('click', function(){
+		$("#world-builder").css("display","none");
+		for(c=1;c<unitIDs.length;c++){
+			unitIDs[c].resetInitiative();
+		}
+		isBuilding = false;
+	});
+})
+
+</script>
+
+</html>
